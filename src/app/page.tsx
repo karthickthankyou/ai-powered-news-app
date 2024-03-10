@@ -1,14 +1,12 @@
-'use client'
-
-import { trpcClient } from '@/trpc/clients/client'
+import { trpcServer } from '@/trpc/clients/server'
 import { UserButton } from '@clerk/nextjs'
 
-export default function Home() {
-  const { data, isLoading } = trpcClient.users.useQuery()
+export default async function Home() {
+  const users = await trpcServer.users.query()
   return (
     <main>
       <UserButton />
-      {data?.map((user) => (
+      {users?.map((user) => (
         <div key={user.id} className="p-4">
           <div>{user.id}</div>
           <div>{user.name}</div>
