@@ -5,7 +5,6 @@ export default async function Home() {
   const users = await trpcServer.users.query()
   return (
     <main>
-      <UserButton />
       {users?.map((user) => (
         <div key={user.id} className="p-4">
           <div>{user.id}</div>
