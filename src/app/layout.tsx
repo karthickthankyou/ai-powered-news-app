@@ -1,14 +1,17 @@
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 
-import { Inter } from 'next/font/google'
+import { Merriweather } from 'next/font/google'
 import './globals.css'
 import { TRPCReactProvider } from '@/trpc/clients/client'
 import { Navbar } from '@/components/organisms/Navbar'
 import { Toaster } from '@/components/molecules/Toaster/Toaster'
 import { Container } from '@/components/atoms/container'
 
-const inter = Inter({ subsets: ['latin'] })
+const merriweather = Merriweather({
+  subsets: ['latin'],
+  weight: ['300', '400', '700', '900'],
+})
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -24,7 +27,7 @@ export default function RootLayout({
     <ClerkProvider>
       <TRPCReactProvider>
         <html lang="en">
-          <body className={inter.className}>
+          <body className={merriweather.className}>
             <Navbar />
 
             <Container>{children}</Container>
