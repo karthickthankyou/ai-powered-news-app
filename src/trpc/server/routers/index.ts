@@ -1,7 +1,7 @@
-import { createTRPCRouter, publicProcedure } from '..'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '..'
 
 export const appRouter = createTRPCRouter({
-  users: publicProcedure.query(({ ctx }) => {
+  users: protectedProcedure('admin', 'reporter').query(({ ctx }) => {
     return ctx.db.user.findMany()
   }),
 })
