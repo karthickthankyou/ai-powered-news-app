@@ -22,6 +22,12 @@ model User {
     image    String?
     Admin    Admin?
     Reporter Reporter?
+
+    Feedbacks     Feedback[]
+    CreditBalance CreditBalance?
+
+    MyEditors       Editor[] @relation("myEditors")
+    FavoriteEditors Editor[] @relation("favoriteEditors")
 }
 
 model Admin {
@@ -40,4 +46,147 @@ model Reporter {
     updatedAt DateTime @updatedAt
 
     User User @relation(fields: [id], references: [id])
+
+    Articles Article[]
+}
+
+model Article {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    title     String
+    body      String
+    summary   String?
+    published Boolean @default(false)
+
+    tags           String[]
+    Feedbacks      Feedback[]
+    Reporter       Reporter        @relation(fields: [reporterId], references: [id])
+    reporterId     String
+    EditorArticles EditorArticle[]
+}
+
+model Feedback {
+    id        Int          @id @default(autoincrement())
+    createdAt DateTime     @default(now())
+    updatedAt DateTime     @updatedAt
+    uid       String
+    articleId Int
+    user      User         @relation(fields: [uid], references: [id])
+    article   Article      @relation(fields: [articleId], references: [id])
+    type      FeedbackType
+
+    @@unique([uid, articleId])
+}
+
+enum FeedbackType {
+    LOVE
+    LIKE
+    DISLIKE
+    HATE
+}
+
+model CreditBalance {
+    id        Int      @id @default(autoincrement())
+    userId    String   @unique
+    balance   Float    @default(0)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    Transactions Transaction[]
+}
+
+model Transaction {
+    id              Int      @id @default(autoincrement())
+    userId          String
+    notes           String?
+    amount          Float
+    inputTokens     Int      @default(0)
+    outputTokens    Int      @default(0)
+    createdAt       DateTime @default(now())
+    creditBalanceId Int
+
+    CreditBalance CreditBalance @relation(fields: [creditBalanceId], references: [id], onDelete: Cascade)
+}
+
+model Editor {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name           String
+    imagePublicId  String?
+    language       Language       @default(ENGLISH)
+    style          Style
+    verbosity      Verbosity
+    wordComplexity WordComplexity
+
+    additionalNotes String?
+
+    User        User   @relation("myEditors", fields: [userId], references: [id], onDelete: Cascade)
+    userId      String
+    FavoritedBy User[] @relation("favoriteEditors")
+
+    EditorArticles EditorArticle[]
+}
+
+model EditorArticle {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    title   String
+    body    String
+    summary String?
+
+    Editor   Editor @relation(fields: [editorId], references: [id], onDelete: Cascade)
+    editorId Int
+
+    OriginalArticle   Article @relation(fields: [originalArticleId], references: [id], onDelete: Cascade)
+    originalArticleId Int
+
+    @@unique([editorId, originalArticleId])
+}
+
+enum Language {
+    ENGLISH
+    TAMIL
+    HINDI
+    FRENCH
+    SPANISH
+    GERMAN
+    MANDARIN
+    JAPANESE
+}
+
+enum Style {
+    SENSATIONALIST // Exaggerated, attention-grabbing language
+    CHEERLEADER_HYPE // Exaggeratedly positive, hype-building way about any topic
+    POETIC_DESCRIPTIVE // Vivid imagery, metaphors, lyrical language
+    STRAIGHTFORWARD_FACTUAL // Concise, objective, strictly informational
+    CONSPIRACY_THEORIST // Speculative, questioning mainstream narratives
+    CELEBRITY_GOSSIP // Informal, focused on personalities and rumors
+    BREAKING_NEWS_URGENCY // Conveying a sense of immediacy and importance
+    HAIKU // Concise, nature-focused poetry
+    SHAKESPEAREAN_DRAMATIC // Iambic pentameter, grandiose metaphors
+    MOVIE_TRAILER_VOICEOVER // Suspenseful narration, highlighting key moments
+    RALLY_CRY_RHETORIC // Emotional appeals, "us vs. them" language
+    LEGAL_FORMALITIES // Dense legalese, disclaimers, formal tone
+    ACADEMIC_ANALYTICAL // In-depth analysis, scholarly language
+    SATIRICAL_HUMOR // Witty, ironic takes on the subject matter
+    CONVERSATIONAL_BLOG // Informal, personal, opinion-driven style
+}
+
+enum Verbosity {
+    SUCCINCT // Short and to the point
+    MODERATE // Balanced length
+    ELABORATE // Detailed and expansive
+}
+
+enum WordComplexity {
+    ELEMENTARY // Basic, everyday vocabulary
+    INTERMEDIATE //  More descriptive vocabulary
+    SOPHISTICATED //  Specialized or nuanced terms
 }
