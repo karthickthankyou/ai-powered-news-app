@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: ai-news_db
+    image: postgres
+    restart: always
+    ports:
+      - 1140:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data_ai-news:/var/lib/postgresql/data
+  pgadmin:
+    container_name: ai-news_pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 1141:80
+    depends_on:
+      - db
+volumes:
+  db_data_ai-news:
