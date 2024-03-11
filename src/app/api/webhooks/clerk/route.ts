@@ -1,9 +1,11 @@
 import { WebhookEvent } from '@clerk/nextjs/server'
 import { prisma } from '@/db'
 import { NextResponse } from 'next/server'
+import { AIService } from '@/ai/ai.service'
 
 export async function POST(request: Request) {
   const payload: WebhookEvent = await request.json()
+  const ai = new AIService()
 
   if (payload.type === 'user.created') {
     const { id, first_name, last_name, image_url } = payload.data
@@ -17,9 +19,7 @@ export async function POST(request: Request) {
         },
       })
 
-      /**
-       * Todo: Add user to pinecone.
-       */
+      await ai.addUser({ uid: id })
 
       return NextResponse.json({ status: 'success' })
     } catch (error) {
