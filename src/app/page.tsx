@@ -1,5 +1,9 @@
-import { fontSansClassName } from '@/util/fonts'
+import { HomePage } from '@/components/templates/Homepage'
 
 export default async function Home() {
-  return <main className={fontSansClassName}>Hello mars</main>
+  return (
+    <main>
+      <HomePage />
+    </main>
+  )
 }
