@@ -3,15 +3,17 @@ import { TRPCError, initTRPC } from '@trpc/server'
 import { prisma } from '@/db'
 import { Role } from '@/util/types'
 import { authorizeUser } from './util'
+import { AIService } from '@/ai/ai.service'
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = auth()
 
-  // Todo: Add ai to the ctx.
+  const ai = new AIService()
 
   return {
     db: prisma,
     session,
+    ai,
     ...opts,
   }
 }

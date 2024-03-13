@@ -1,6 +1,7 @@
 import { Index, Pinecone, RecordMetadata } from '@pinecone-database/pinecone'
 import { INDEX_NAME } from './constants'
 import { TRPCError } from '@trpc/server'
+import { RouterOutputs } from '@/trpc/clients/types'
 
 export class AIService {
   private readonly pineconeIndex: Index<RecordMetadata>
@@ -25,6 +26,32 @@ export class AIService {
         },
       },
     ])
+  }
+
+  async upsertArticle(article: RouterOutputs['articles']['create']) {
+    const combinedText = `${article.title} ${article.body} ${article.tags.join(
+      ' ',
+    )}`
+
+    const values = await this.createEmbedding(combinedText)
+
+    await this.pineconeIndex.upsert([
+      {
+        id: article.id.toString(),
+        values: values.data[0].embedding,
+        metadata: {
+          ...article,
+          type: 'article',
+          summary: article.summary || '',
+        },
+      },
+    ])
+  }
+  async updateArticle(articleId: number, published: boolean) {
+    await this.pineconeIndex.update({
+      id: articleId.toString(),
+      metadata: { published },
+    })
   }
 
   private createEmbedding(content: string) {
