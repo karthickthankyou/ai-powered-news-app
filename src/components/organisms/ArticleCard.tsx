@@ -4,6 +4,7 @@ import { DisplayDate } from '../molecules/DisplayDate'
 import { cn } from '@/util/styles'
 import { RouterOutputs } from '@/trpc/clients/types'
 import { Badge } from '../atoms/badge'
+import { ReactionPanel } from './ReactionPanel'
 
 export const ArticleCard = ({
   article,
@@ -37,6 +38,7 @@ export const ArticleCard = ({
           </Badge>
         ))}
       </div>
+      <ReactionPanel articleId={article.id} className="mt-2" />
 
       <div className="mt-1 text-xs text-gray-500">
         Current relevance{' '}
