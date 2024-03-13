@@ -21,3 +21,8 @@ export const schemaGiveFeedback = z.object({
 export const schemaNumberID = z.object({
   id: z.number(),
 })
+
+export const schemaPayment = z.object({
+  userId: z.string(),
+  creditsCount: z.coerce.number(),
+})
