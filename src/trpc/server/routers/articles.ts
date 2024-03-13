@@ -1,5 +1,10 @@
-import { schemaCreateArticle, schemaUpdateArticle } from '@/forms/schemas'
+import {
+  schemaCreateArticle,
+  schemaNumberID,
+  schemaUpdateArticle,
+} from '@/forms/schemas'
 import { createTRPCRouter, protectedProcedure } from '..'
+import { fetchAndScoreRelatedArticles } from './shared/articles'
 
 export const articlesRouter = createTRPCRouter({
   create: protectedProcedure('admin', 'reporter')
@@ -18,6 +23,14 @@ export const articlesRouter = createTRPCRouter({
       })
       return article
     }),
+  findOne: protectedProcedure()
+    .input(schemaNumberID)
+    .query(async ({ ctx, input }) => {
+      return ctx.db.article.findUnique({
+        where: { id: input.id },
+        include: { Reporter: { include: { User: true } } },
+      })
+    }),
   update: protectedProcedure('admin', 'reporter')
     .input(schemaUpdateArticle)
     .mutation(async ({ input: { articleId, published }, ctx }) => {
@@ -34,37 +47,12 @@ export const articlesRouter = createTRPCRouter({
 
   userRecommendations: protectedProcedure().query(async ({ ctx }) => {
     const { ai, db, userId } = ctx
-    const related = await ai.userRecommendations({ id: userId })
-
-    const articleIds = related.map((article) => +article.id)
-
-    const articles = await db.article.findMany({
-      where: {
-        id: {
-          in: articleIds,
-        },
-      },
-      select: {
-        title: true,
-        createdAt: true,
-        id: true,
-        tags: true,
-        summary: true,
-      },
-    })
-
-    type RelatedArticle = (typeof articles)[0]
-
-    return related
-      .map(({ id, score }) => {
-        const article = articles.find((article) => article.id === +id)
-        if (article) {
-          return { score, article }
-        }
-      })
-      .filter(
-        (article): article is { article: RelatedArticle; score: number } =>
-          !!article,
-      )
+    return fetchAndScoreRelatedArticles({ ai, db, id: userId })
   }),
+  moreLikeThis: protectedProcedure()
+    .input(schemaNumberID)
+    .query(async ({ ctx, input: { id } }) => {
+      const { ai, db } = ctx
+      return fetchAndScoreRelatedArticles({ ai, db, id: id.toString() })
+    }),
 })
