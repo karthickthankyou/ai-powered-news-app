@@ -7,6 +7,7 @@ import { TRPCReactProvider } from '@/trpc/clients/client'
 import { Navbar } from '@/components/organisms/Navbar'
 import { Toaster } from '@/components/molecules/Toaster/Toaster'
 import { Container } from '@/components/atoms/container'
+import { cn } from '@/util/styles'
 
 const merriweather = Merriweather({
   subsets: ['latin'],
@@ -27,7 +28,7 @@ export default function RootLayout({
     <ClerkProvider>
       <TRPCReactProvider>
         <html lang="en">
-          <body className={merriweather.className}>
+          <body className={cn(merriweather.className)}>
             <Navbar />
 
             <Container>{children}</Container>

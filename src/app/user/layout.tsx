@@ -11,15 +11,13 @@ export default async function Layout({
       <div className="hidden w-full max-w-xs sm:block">
         <UserMenu />
       </div>
-      <div className="flex-grow">
+      <div className="flex-grow ">
         <div className="sm:hidden">
           <SimpleSidebar>
             <UserMenu />
           </SimpleSidebar>
         </div>
-        <div className="bg-white min-h-[calc(100vh-8rem)] py-2 px-4">
-          {children}
-        </div>
+        <div className=" min-h-[calc(100vh-8rem)] py-2 px-4">{children}</div>
       </div>
     </div>
   )
