@@ -7,11 +7,14 @@ import { CloundinaryImage } from '../molecules/CloudinaryImage'
 import { EditorInfo } from './EditorInfo'
 import { UpdateEditor } from './UpdateEditor'
 import { DeleteEditor } from './DeleteEditor'
+import { FavoriteEditorButton } from './FavoriteEditorButton'
 
 export const EditorCard = ({
   editor,
+  isOwner = false,
 }: {
   editor: NonNullable<RouterOutputs['editors']['myEditors'][0]>
+  isOwner?: boolean
 }) => {
   return (
     <div className={cn(' bg-white shadow-xl rounded-lg overflow-hidden')}>
@@ -20,12 +23,16 @@ export const EditorCard = ({
         <div className="flex justify-between gap-2 items-center mb-2">
           <Title2 className="mb-0">{editor.name}</Title2>
 
-          <div className="flex justify-between gap-3">
-            <div className="flex gap-3">
-              <UpdateEditor editor={editor} />
-              <DeleteEditor editor={editor} />
+          {isOwner ? (
+            <div className="flex justify-between gap-3">
+              <div className="flex gap-3">
+                <UpdateEditor editor={editor} />
+                <DeleteEditor editor={editor} />
+              </div>
             </div>
-          </div>
+          ) : (
+            <FavoriteEditorButton editor={editor} />
+          )}
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4">
           <EditorInfo editor={editor} />

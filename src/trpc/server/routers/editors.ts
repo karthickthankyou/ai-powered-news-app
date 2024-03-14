@@ -9,12 +9,47 @@ export const editorRoutes = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       return ctx.db.editor.create({ data: { ...input, userId: ctx.userId } })
     }),
+  findAll: protectedProcedure().query(({ ctx }) => {
+    return ctx.db.editor.findMany({
+      include: { User: true },
+    })
+  }),
   myEditors: protectedProcedure().query(({ ctx }) => {
     return ctx.db.editor.findMany({
       where: { userId: ctx.userId },
       include: { User: true },
     })
   }),
+  getFavorite: protectedProcedure()
+    .input(schemaNumberID)
+    .query(({ ctx, input }) => {
+      return ctx.db.editor.findFirst({
+        where: { id: input.id, FavoritedBy: { some: { id: ctx.userId } } },
+      })
+    }),
+  favorite: protectedProcedure()
+    .input(schemaNumberID)
+    .mutation(async ({ ctx, input }) => {
+      const favorite = await ctx.db.editor.findFirst({
+        where: { id: input.id, FavoritedBy: { some: { id: ctx.userId } } },
+      })
+      if (favorite) {
+        return ctx.db.user.update({
+          data: {
+            FavoriteEditors: { disconnect: { id: input.id } },
+          },
+          where: { id: ctx.userId },
+        })
+      }
+
+      return ctx.db.user.update({
+        data: {
+          FavoriteEditors: { connect: { id: input.id } },
+        },
+        where: { id: ctx.userId },
+      })
+    }),
+
   delete: protectedProcedure()
     .input(schemaNumberID)
     .mutation(async ({ ctx, input }) => {
