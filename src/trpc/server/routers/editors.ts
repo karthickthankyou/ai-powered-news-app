@@ -86,4 +86,10 @@ export const editorRoutes = createTRPCRouter({
         where: { id },
       })
     }),
+  favoriteEditors: protectedProcedure().query(({ ctx }) => {
+    return ctx.db.editor.findMany({
+      where: { FavoritedBy: { some: { id: ctx.userId } } },
+      include: { User: true },
+    })
+  }),
 })

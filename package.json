@@ -15,6 +15,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.18.0",
     "@clerk/nextjs": "^4.29.9",
     "@hookform/resolvers": "^3.3.4",
     "@pinecone-database/pinecone": "^2.1.0",
@@ -24,6 +25,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toast": "^1.1.5",
+    "@radix-ui/react-tooltip": "^1.0.7",
     "@stripe/stripe-js": "^3.0.8",
     "@tanstack/react-query": "4.36.1",
     "@trpc/client": "^10.45.1",
