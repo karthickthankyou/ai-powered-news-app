@@ -6,6 +6,7 @@ import { editorRoutes } from './editors'
 import { feedbackRoutes } from './feedbacks'
 import { reporterRoutes } from './reporters'
 import { stripeRoutes } from './stripe'
+import { userRoutes } from './users'
 
 export const appRouter = createTRPCRouter({
   admins: adminRoutes,
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   creditBalance: creditBalanceRoutes,
   stripe: stripeRoutes,
   editors: editorRoutes,
+  users: userRoutes,
 })
 
 export type AppRouter = typeof appRouter

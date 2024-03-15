@@ -30,4 +30,15 @@ export const adminRoutes = createTRPCRouter({
       }
       return ctx.db.admin.create({ data: input })
     }),
+  dashboard: protectedProcedure('admin').query(async ({ ctx }) => {
+    const [admin, reporter, editor, article, user] = await Promise.all([
+      ctx.db.admin.count(),
+      ctx.db.reporter.count(),
+      ctx.db.editor.count(),
+      ctx.db.article.count(),
+      ctx.db.user.count(),
+    ])
+
+    return { admin, reporter, editor, article, user }
+  }),
 })

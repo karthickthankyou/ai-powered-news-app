@@ -1,3 +1,19 @@
+import { StatCard } from '@/components/organisms/StatCard'
+import { trpcServer } from '@/trpc/clients/server'
+import { FileArchive } from 'lucide-react'
+
 export default async function Page() {
-  return <div>Reporter</div>
+  const { articles } = await trpcServer.reporters.dashboard.query()
+
+  return (
+    <div className="grid grid-cols-4 gap-4">
+      <StatCard
+        href={'/reporter/myArticles'}
+        label={'My Articles'}
+        Icon={FileArchive}
+      >
+        {articles}
+      </StatCard>
+    </div>
+  )
 }

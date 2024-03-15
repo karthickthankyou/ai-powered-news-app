@@ -33,4 +33,10 @@ export const reporterRoutes = createTRPCRouter({
   myArticles: protectedProcedure('reporter', 'admin').query(({ ctx }) => {
     return ctx.db.article.findMany({ where: { reporterId: ctx.userId } })
   }),
+  dashboard: protectedProcedure().query(async ({ ctx }) => {
+    const myArticlesCount = await ctx.db.article.count({
+      where: { reporterId: ctx.userId },
+    })
+    return { articles: myArticlesCount }
+  }),
 })
